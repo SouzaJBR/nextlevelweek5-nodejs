@@ -28,6 +28,11 @@ class SettingsService {
         return settings;
     }
 
+    async findByUsername(username: string) {
+        const settings = this.settingsRepository.findOne({username});
+        return settings;
+    }
+
     constructor() {
         this.settingsRepository = getCustomRepository(SettingsRepository);
     }
