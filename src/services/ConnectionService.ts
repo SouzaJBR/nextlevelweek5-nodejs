@@ -1,4 +1,4 @@
-import { getCustomRepository, Repository } from "typeorm";
+import { createQueryBuilder, getCustomRepository, Repository } from "typeorm";
 import { Connection } from "../entities/Connection";
 import { ConnectionsRepository } from "../repositories/ConnectionsRepository";
 
@@ -29,6 +29,33 @@ class ConnectionService {
         });
 
         return connection;
+    }
+
+    async findAllWithoutAdmin() {
+        const connections = await this.connectionsRepository
+            .find({
+                where: {admin_id: null},
+                relations: ['user']
+            });
+
+            return connections;
+    }
+
+    async findBySocketId(socket_id: string) {
+        const connection = await this.connectionsRepository
+            .findOne({socket_id});
+
+        return connection;
+    }
+
+    async updateAdminid(user_id: string, admin_id: string) {
+
+        await this.connectionsRepository
+            .createQueryBuilder()
+            .update()
+            .set({admin_id})
+            .where("user_id = :user_id", {user_id})
+            .execute();
     }
 
     constructor() {
